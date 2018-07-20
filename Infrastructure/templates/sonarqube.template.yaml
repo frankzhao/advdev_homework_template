@@ -9,7 +9,7 @@ objects:
   metadata:
     annotations:
       openshift.io/generated-by: OpenShiftNewApp
-      openshift.io/image.dockerRepositoryCheck: 2018-07-20T10:21:16Z
+      openshift.io/image.dockerRepositoryCheck: 2018-07-20T10:32:51Z
     creationTimestamp: null
     generation: 2
     labels:
@@ -34,7 +34,7 @@ objects:
     dockerImageRepository: docker-registry.default.svc:5000/fz-assignment/centos
     tags:
     - items:
-      - created: 2018-07-20T10:21:16Z
+      - created: 2018-07-20T10:32:51Z
         dockerImageReference: docker.io/centos@sha256:eed5b251b615d1e70b10bcec578d64e8aa839d2785c2ffd5424e472818c42755
         generation: 2
         image: sha256:eed5b251b615d1e70b10bcec578d64e8aa839d2785c2ffd5424e472818c42755
@@ -57,10 +57,10 @@ objects:
     dockerImageRepository: docker-registry.default.svc:5000/fz-assignment/docker-openshift-sonarqube
     tags:
     - items:
-      - created: 2018-07-20T10:22:06Z
-        dockerImageReference: docker-registry.default.svc:5000/fz-assignment/docker-openshift-sonarqube@sha256:7819f9ac76d10c21b6c6894651ede44239671642fd0138086cee9317abc8baf2
+      - created: 2018-07-20T10:33:07Z
+        dockerImageReference: docker-registry.default.svc:5000/fz-assignment/docker-openshift-sonarqube@sha256:293d659c2347eebffe6b7e4bb43b1ef209840a638b95cc0f0a92c743509f0afe
         generation: 1
-        image: sha256:7819f9ac76d10c21b6c6894651ede44239671642fd0138086cee9317abc8baf2
+        image: sha256:293d659c2347eebffe6b7e4bb43b1ef209840a638b95cc0f0a92c743509f0afe
       tag: latest
 - apiVersion: v1
   kind: Route
@@ -84,7 +84,7 @@ objects:
   status:
     ingress:
     - conditions:
-      - lastTransitionTime: 2018-07-20T10:21:16Z
+      - lastTransitionTime: 2018-07-20T10:32:50Z
         status: "True"
         type: Admitted
       host: docker-openshift-sonarqube-fz-assignment.apps.wlg.example.opentlc.com
@@ -101,7 +101,7 @@ objects:
     name: docker-openshift-sonarqube
     namespace: fz-assignment
   spec:
-    clusterIP: 172.30.218.50
+    clusterIP: 172.30.225.116
     ports:
     - name: 9000-tcp
       port: 9000
@@ -127,7 +127,7 @@ objects:
     name: postgresql
     namespace: fz-assignment
   spec:
-    clusterIP: 172.30.219.111
+    clusterIP: 172.30.15.119
     ports:
     - name: postgresql
       port: 5432
@@ -158,8 +158,6 @@ objects:
       deploymentconfig: docker-openshift-sonarqube
     strategy:
       activeDeadlineSeconds: 21600
-      recreateParams:
-        timeoutSeconds: 600
       resources: {}
       rollingParams:
         intervalSeconds: 1
@@ -167,7 +165,7 @@ objects:
         maxUnavailable: 25%
         timeoutSeconds: 600
         updatePeriodSeconds: 1
-      type: Recreate
+      type: Rolling
     template:
       metadata:
         annotations:
@@ -181,32 +179,12 @@ objects:
         - env:
           - name: SONARQUBE_JDBC_USERNAME
             value: sonar,SONARQUBE_JDBC_PASSWORD=sonar,SONARQUBE_JDBC_URL=jdbc:postgresql://postgresql/sonar
-          image: docker-registry.default.svc:5000/fz-assignment/docker-openshift-sonarqube@sha256:7819f9ac76d10c21b6c6894651ede44239671642fd0138086cee9317abc8baf2
+          image: docker-registry.default.svc:5000/fz-assignment/docker-openshift-sonarqube@sha256:293d659c2347eebffe6b7e4bb43b1ef209840a638b95cc0f0a92c743509f0afe
           imagePullPolicy: Always
-          livenessProbe:
-            failureThreshold: 3
-            httpGet:
-              path: /about
-              port: 9000
-              scheme: HTTP
-            initialDelaySeconds: 240
-            periodSeconds: 10
-            successThreshold: 1
-            timeoutSeconds: 1
           name: docker-openshift-sonarqube
           ports:
           - containerPort: 9000
             protocol: TCP
-          readinessProbe:
-            failureThreshold: 3
-            httpGet:
-              path: /about
-              port: 9000
-              scheme: HTTP
-            initialDelaySeconds: 240
-            periodSeconds: 10
-            successThreshold: 1
-            timeoutSeconds: 1
           resources:
             limits:
               cpu: "2"
@@ -360,3 +338,46 @@ objects:
     replicas: 0
     unavailableReplicas: 0
     updatedReplicas: 0
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: docker-openshift-sonarqube
+    name: docker-openshift-sonarqube
+    namespace: fz-assignment
+  spec:
+    failedBuildsHistoryLimit: 5
+    nodeSelector: null
+    output:
+      to:
+        kind: ImageStreamTag
+        name: docker-openshift-sonarqube:latest
+    postCommit: {}
+    resources: {}
+    runPolicy: Serial
+    source:
+      git:
+        uri: https://github.com/wkulhanek/docker-openshift-sonarqube.git
+      type: Git
+    strategy:
+      dockerStrategy:
+        from:
+          kind: ImageStreamTag
+          name: centos:7
+      type: Docker
+    successfulBuildsHistoryLimit: 5
+    triggers:
+    - github:
+        secret: 1vmgMkHv9e6p-XIYFx7w
+      type: GitHub
+    - generic:
+        secret: FEykyhhb8tQsqUBPBf6P
+      type: Generic
+    - type: ConfigChange
+    - imageChange: {}
+      type: ImageChange
+  status:
+    lastVersion: 0
