@@ -28,21 +28,15 @@ echo "Setting up Nexus in project $GUID-nexus"
 # Ideally just calls a template
 # oc new-app -f ../templates/nexus.yaml --param .....
 # To be Implemented by Student
-oc create -f ../templates/pvc/nexus.pvc.yaml
-oc new-app --docker-image=docker.io/sonatype/nexus3:latest --name=nexus3
-oc set volumes dc/nexus3 --add --name nexus3-volume-1 --mount-path=/nexus-data --type persistentVolumeClaim --claim-name=nexus-pvc --overwrite
-oc set resources dc nexus3 --limits=memory=2Gi --requests=memory=1Gi
-oc expose svc/nexus3
-oc set probe dc/nexus3 --readiness --get-url=http://:8081 --initial-delay-seconds=240
-oc set probe dc/nexus3 --liveness --get-url=http://:8081 --initial-delay-seconds=240
+oc new-app -f ../templates/fz-assignment-nexus.template.yaml -n $GUID-assignment
 
 # wait for nexus
 while : ; do
   echo "Checking if Nexus is Ready..."
-  oc get pod -n ${GUID}-assignment|grep '\-2\-'|grep -v deploy|grep "1/1"
+  oc get pod -n ${GUID}-assignment|grep '\-1\-'|grep -v deploy|grep "1/1"
   [[ "$?" == "1" ]] || break
-  echo "...no. Sleeping 10 seconds."
-  sleep 10
+  echo "...no. Sleeping 60 seconds."
+  sleep 60
 done
 
 curl -o setup_nexus3.sh -s https://raw.githubusercontent.com/wkulhanek/ocp_advanced_development_resources/master/nexus/setup_nexus3.sh
