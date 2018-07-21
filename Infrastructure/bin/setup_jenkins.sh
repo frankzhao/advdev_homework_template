@@ -37,3 +37,11 @@ oc new-app jenkins-persistent \
 docker build -t docker-registry-default.$CLUSTER/$GUID-jenkins/jenkins-slave-maven-appdev:v3.9 ../templates/docker/skopeo
 docker login docker-registry-default.$CLUSTER -u $(oc whoami) -p $(oc whoami -t)
 docker push docker-registry-default.$CLUSTER/$GUID-jenkins/jenkins-slave-maven-appdev:v3.9
+
+oc create -f ../templates/nationalparks.pipeline.yaml
+oc create -f ../templates/mlbparks.pipeline.yaml
+oc create -f ../templates/parksmap.pipeline.yaml
+
+oc env bc/nationalparks-pipeline GUID=$GUID CLUSTER=$CLUSTER -n $GUID-jenkins
+oc env bc/mlbparks-pipeline GUID=$GUID CLUSTER=$CLUSTER -n $GUID-jenkins
+oc env bc/parksmap-pipeline GUID=$GUID CLUSTER=$CLUSTER -n $GUID-jenkins
