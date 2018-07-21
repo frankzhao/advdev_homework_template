@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Template
 metadata:
   creationTimestamp: null
-  name: fz-nexus
+  name: ${GUID}-nexus
 objects:
 - apiVersion: v1
   kind: DeploymentConfig
@@ -14,7 +14,7 @@ objects:
     labels:
       app: nexus3
     name: nexus3
-    namespace: fz-nexus
+    namespace: ${GUID}-nexus
   spec:
     replicas: 1
     revisionHistoryLimit: 10
@@ -96,7 +96,7 @@ objects:
         from:
           kind: ImageStreamTag
           name: nexus3:latest
-          namespace: fz-nexus
+          namespace: ${GUID}-nexus
       type: ImageChange
   status:
     availableReplicas: 0
@@ -116,7 +116,7 @@ objects:
     labels:
       app: nexus3
     name: nexus3
-    namespace: fz-nexus
+    namespace: ${GUID}-nexus
   spec:
     lookupPolicy:
       local: false
@@ -132,12 +132,12 @@ objects:
       referencePolicy:
         type: Source
   status:
-    dockerImageRepository: docker-registry.default.svc:5000/fz-nexus/nexus3
+    dockerImageRepository: docker-registry.default.svc:5000/${GUID}-nexus/nexus3
     tags:
     - conditions:
       - generation: 2
         lastTransitionTime: 2018-07-20T07:43:19Z
-        message: dockerimage.image.openshift.io "docker-registry.default.svc:5000/fz-assignment/nexus3:latest"
+        message: dockerimage.image.openshift.io "docker-registry.default.svc:5000/${GUID}-assignment/nexus3:latest"
           not found
         reason: NotFound
         status: "False"
@@ -154,7 +154,7 @@ objects:
     labels:
       app: nexus3
     name: nexus3
-    namespace: fz-nexus
+    namespace: ${GUID}-nexus
   spec:
     port:
       targetPort: 8081-tcp
@@ -180,7 +180,7 @@ objects:
     labels:
       app: nexus3
     name: nexus3
-    namespace: fz-nexus
+    namespace: ${GUID}-nexus
   spec:
     clusterIP: 172.30.34.17
     ports:
@@ -205,3 +205,8 @@ objects:
     resources:
       requests:
         storage: 4Gi
+parameters:
+  - displayName: GUID
+    name: GUID
+    required: true
+    value: fz

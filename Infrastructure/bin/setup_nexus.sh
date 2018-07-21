@@ -28,7 +28,8 @@ echo "Setting up Nexus in project $GUID-nexus"
 # Ideally just calls a template
 # oc new-app -f ../templates/nexus.yaml --param .....
 # To be Implemented by Student
-oc new-app -f ../templates/nexus.template.yaml -n $GUID-nexus
+oc new-app -f ../templates/nexus.template.yaml \
+  --param GUID=$GUID -n $GUID-nexus
 
 # wait for nexus
 while : ; do
@@ -44,3 +45,6 @@ chmod +x setup_nexus3.sh
 ./setup_nexus3.sh admin admin123 http://$(oc get route nexus3 --template='{{ .spec.host }}')
 rm setup_nexus3.sh
 
+// expose registry
+oc expose dc/nexus3 --port=5000 --name=nexus-registry
+oc create route edge nexus-registry --service=nexus-registry --port=5000

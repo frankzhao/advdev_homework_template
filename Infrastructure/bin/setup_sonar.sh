@@ -19,7 +19,8 @@ oc new-app -f ../templates/sonarqube.template.yaml\
   --param POSTGRESQL_PASSWORD=sonar\
   --param POSTGRESQL_DATABASE=sonar\
   --param POSTGRESQL_VOLUME=4Gi\
-  --param GUID=$GUID
+  --param GUID=$GUID\
+  -n $GUID-sonarqube
 # oc new-app --template=postgresql-persistent --param POSTGRESQL_USER=sonar\
 #   --param POSTGRESQL_PASSWORD=sonar --param POSTGRESQL_DATABASE=sonar\
 #   --param VOLUME_CAPACITY=4Gi --labels=app=sonarqube_db
