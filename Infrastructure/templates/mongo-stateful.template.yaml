@@ -58,19 +58,19 @@ objects:
                 mountPath: "/var/lib/mongodb/data"
             env:
               - name: MONGODB_DATABASE
-                value: "mongodb"
+                value: ${MONGODB_DATABASE}
               - name: MONGODB_USER
-                value: "mongodb_user"
+                value: ${MONGODB_USER}
               - name: MONGODB_PASSWORD
-                value: "mongodb_password"
+                value: ${MONGODB_PASSWORD}
               - name: MONGODB_ADMIN_PASSWORD
-                value: "mongodb_admin_password"
+                value: ${MONGODB_ADMIN_PASSWORD}
               - name: MONGODB_REPLICA_NAME
                 value: "rs0"
               - name: MONGODB_KEYFILE_VALUE
                 value: "12345678901234567890"
               - name: MONGODB_SERVICE_NAME
-                value: "mongodb-internal"
+                value: ${MONGODB_SERVICE_NAME}
             readinessProbe:
               exec:
                 command:
@@ -85,4 +85,30 @@ objects:
           accessModes: [ ReadWriteOnce ]
           resources:
             requests:
-              storage: "4Gi"
+              storage: ${MONGODB_VOLUME}
+
+parameters:
+  - displayName: Mongo database name
+    name: MONGODB_DATABASE
+    required: true
+    value: mongodb
+  - displayName: Mongo username
+    name: MONGODB_USERNAME
+    required: true
+    value: mongodb_user
+  - displayName: Mongo password
+    name: MONGODB_PASSWORD
+    required: true
+    value: mongodb_password
+  - displayName: Mongo admin password
+    name: MONGODB_ADMIN_PASSWORD
+    required: true
+    value: mongodb_admin_password
+  - displayName: Mongo volume size
+    name: MONGODB_VOLUME
+    required: true
+    value: 4Gi
+  - displayName: Mongo service name
+    name: MONGODB_SERVICE_NAME
+    required: true
+    value: mongodb-internal
