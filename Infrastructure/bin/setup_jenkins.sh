@@ -27,5 +27,13 @@ echo "Setting up Jenkins in project ${GUID}-jenkins from Git Repo ${REPO} for Cl
 # * CLUSTER: the base url of the cluster used (e.g. na39.openshift.opentlc.com)
 
 # To be Implemented by Student
-oc new-app jenkins-persistent --param ENABLE_OAUTH=true --param MEMORY_LIMIT=2Gi --param VOLUME_CAPACITY=4Gi
+oc new-app jenkins-persistent \
+    --param ENABLE_OAUTH=true \
+    --param MEMORY_LIMIT=2Gi \
+    --param VOLUME_CAPACITY=4Gi \
+    -n $GUID-jenkins
 
+# build skopeo slave
+docker build -t docker-registry-default.$CLUSTER/$GUID-jenkins/jenkins-slave-maven-appdev:v3.9 ../templates/docker/skopeo
+docker login docker-registry-default.$CLUSTER -u $(oc whoami) -p $(oc whoami -t)
+docker push docker-registry-default.$CLUSTER/$GUID-jenkins/jenkins-slave-maven-appdev:v3.9

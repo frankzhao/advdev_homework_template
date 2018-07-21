@@ -13,3 +13,6 @@ echo "Setting up Parks Production Environment in project ${GUID}-parks-prod"
 # The Green services/routes need to be active initially to guarantee a successful grading pipeline run.
 
 # To be Implemented by Student
+oc new-project $GUID-parks-dev --display-name "Parks Production Environment"
+oc policy add-role-to-user edit system:serviceaccount:$GUID-jenkins:jenkins \
+    -n $GUID-parks-prod
