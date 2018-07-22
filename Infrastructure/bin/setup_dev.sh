@@ -22,6 +22,15 @@ MONGODB_PASSWORD="mongodb_password"
 MONGODB_SERVICE_NAME="mongodb-internal"
 oc new-app -f ../templates/mongo-stateful.template.yaml -n $GUID-parks-dev
 
+# config map
+oc create configmap parks-mongodb-config \
+    --from-literal=DB_HOST=${MONGODB_SERVICE_NAME}\
+    --from-literal=DB_PORT=27017\
+    --from-literal=DB_USERNAME=${MONGODB_USERNAME}\
+    --from-literal=DB_PASSWORD=${MONGODB_PASSWORD}\
+    --from-literal=DB_NAME=${MONGODB_DATABASE}\
+    --from-literal=DB_REPLICASET=rs0
+
 # parksmap
 oc new-build --binary=true --name=parksmap --image-stream=redhat-openjdk18-openshift:1.2 --allow-missing-imagestream-tags=true
 oc new-app $GUID-parks-dev/parksmap:0.0-0 --name=parksmap --allow-missing-imagestream-tags=true -l type=parksmap-frontend -e APPNAME="ParksMap (Dev)"
@@ -41,12 +50,17 @@ oc new-app $GUID-parks-dev/nationalparks:0.0-0 --name=nationalparks \
     --allow-missing-imagestream-tags=true \
     -l type=parksmap-backend \
     -e APPNAME="National Parks (Dev)" \
-    -e DB_HOST=$MONGODB_SERVICE_NAME \
-    -e DB_PORT=27017 \
-    -e DB_USERNAME=$MONGODB_USERNAME \
-    -e DB_PASSWORD=$MONGODB_PASSWORD \
-    -e DB_NAME=$MONGODB_DATABASE
+#    -e DB_HOST=$MONGODB_SERVICE_NAME \
+#    -e DB_PORT=27017 \
+#    -e DB_USERNAME=$MONGODB_USERNAME \
+#    -e DB_PASSWORD=$MONGODB_PASSWORD \
+#    -e DB_NAME=$MONGODB_DATABASE
+    -n $GUID-parks-dev
 oc rollout pause dc nationalparks
+oc set volume dc/nationalparks --add \
+    --name=parks-mongodb-config \
+    --configmap-name=parks-mongodb-config \
+    -n $GUID-parks-dev
 oc set triggers dc/nationalparks --remove-all
 oc expose dc/nationalparks --port=8080 --name=nationalparks
 oc create route edge nationalparks --service=nationalparks --port=8080
@@ -62,12 +76,17 @@ oc new-app $GUID-parks-dev/mlbparks:0.0-0 --name=mlbparks \
     --allow-missing-imagestream-tags=true \
     -l type=parksmap-backend \
     -e APPNAME="MLB Parks (Dev)" \
-    -e DB_HOST=$MONGODB_SERVICE_NAME \
-    -e DB_PORT=27017 \
-    -e DB_USERNAME=$MONGODB_USERNAME \
-    -e DB_PASSWORD=$MONGODB_PASSWORD \
-    -e DB_NAME=$MONGODB_DATABASE
+    #-e DB_HOST=$MONGODB_SERVICE_NAME \
+    #-e DB_PORT=27017 \
+    #-e DB_USERNAME=$MONGODB_USERNAME \
+    #-e DB_PASSWORD=$MONGODB_PASSWORD \
+    #-e DB_NAME=$MONGODB_DATABASE
+    -n $GUID-parks-dev
 oc rollout pause dc mlbparks
+oc set volume dc/mlbparks --add \
+    --name=parks-mongodb-config \
+    --configmap-name=parks-mongodb-config \
+    -n $GUID-parks-dev
 oc set triggers dc/mlbparks --remove-all
 oc expose dc/mlbparks --port=8080 --name=mlbparks
 oc create route edge mlbparks --service=mlbparks --port=8080
