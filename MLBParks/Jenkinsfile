@@ -25,8 +25,8 @@ podTemplate(
     // settings for our Nexus installation (use the service to
     // bypass the router). The file nexus_openshift_settings.xml
     // needs to be in the Source Code repository.
-    // def mvnCmd = "mvn -s ./nexus_openshift_settings.xml"
-    def mvnCmd = "mvn"
+    def mvnCmd = "mvn -s ./nexus_settings.xml"
+    // def mvnCmd = "mvn"
     def projectName="MLBParks"
 
     // Checkout Source Code
