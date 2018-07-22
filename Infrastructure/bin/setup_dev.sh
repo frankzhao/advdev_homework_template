@@ -14,7 +14,7 @@ echo "Setting up Parks Development Environment in project ${GUID}-parks-dev"
 # To be Implemented by Student
 oc project $GUID-parks-dev
 oc policy add-role-to-user view --serviceaccount=default
-
+oc policy add-role-to-user edit system:serviceaccount:$GUID-jenkins:jenkins
 
 MONGODB_DATABASE="mongodb"
 MONGODB_USERNAME="mongodb_user"
@@ -71,16 +71,16 @@ oc set probe dc/nationalparks --liveness \
 oc rollout resume dc/nationalparks
 
 # mlbparks
-oc new-build --binary=true --name=mlbparks --image-stream=redhat-openjdk18-openshift:1.2 --allow-missing-imagestream-tags=true
+oc new-build --binary=true --name=mlbparks --image-stream=jboss-eap70-openshift:1.6 --allow-missing-imagestream-tags=true
 oc new-app $GUID-parks-dev/mlbparks:0.0-0 --name=mlbparks \
     --allow-missing-imagestream-tags=true \
     -l type=parksmap-backend \
     -e APPNAME="MLB Parks (Dev)" \
-    #-e DB_HOST=$MONGODB_SERVICE_NAME \
-    #-e DB_PORT=27017 \
-    #-e DB_USERNAME=$MONGODB_USERNAME \
-    #-e DB_PASSWORD=$MONGODB_PASSWORD \
-    #-e DB_NAME=$MONGODB_DATABASE
+    -e DB_HOST=$MONGODB_SERVICE_NAME \
+    -e DB_PORT=27017 \
+    -e DB_USERNAME=$MONGODB_USERNAME \
+    -e DB_PASSWORD=$MONGODB_PASSWORD \
+    -e DB_NAME=$MONGODB_DATABASE
     -n $GUID-parks-dev
 oc rollout pause dc mlbparks
 oc set volume dc/mlbparks --add \
