@@ -149,11 +149,6 @@ objects:
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
-    annotations:
-      openshift.io/generated-by: OpenShiftNewApp
-      pv.kubernetes.io/bind-completed: "yes"
-      pv.kubernetes.io/bound-by-controller: "yes"
-    creationTimestamp: null
     labels:
       app: sonarqube_db
       template: postgresql-persistent-template
@@ -164,13 +159,12 @@ objects:
     resources:
       requests:
         storage: ${POSTGRESQL_VOLUME}
-    volumeName: pv0064
   status: {}
 - apiVersion: v1
-  data:
-    database-name: c29uYXI=
-    database-password: c29uYXI=
-    database-user: c29uYXI=
+  stringData:
+    database-name: ${POSTGRESQL_DATABASE}
+    database-password: ${POSTGRESQL_PASSWORD}
+    database-user: ${POSTGRESQL_USERNAME}
   kind: Secret
   metadata:
     annotations:
@@ -416,4 +410,4 @@ parameters:
   - displayName: GUID
     name: GUID
     required: true
-    value: fz
+    value: f519
