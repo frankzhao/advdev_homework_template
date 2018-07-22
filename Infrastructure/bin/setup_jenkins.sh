@@ -34,9 +34,12 @@ oc new-app jenkins-persistent \
     -n $GUID-jenkins
 
 # build skopeo slave
-docker build -t docker-registry-default.$CLUSTER/$GUID-jenkins/jenkins-slave-maven-appdev:v3.9 ../templates/docker/skopeo
-docker login docker-registry-default.$CLUSTER -u $(oc whoami) -p $(oc whoami -t)
-docker push docker-registry-default.$CLUSTER/$GUID-jenkins/jenkins-slave-maven-appdev:v3.9
+# docker build -t docker-registry-default.$CLUSTER/$GUID-jenkins/jenkins-slave-appdev:v3.9 ../templates/docker/skopeo
+# docker login docker-registry-default.$CLUSTER -u $(oc whoami) -p $(oc whoami -t)
+# docker push docker-registry-default.$CLUSTER/$GUID-jenkins/jenkins-slave-appdev:v3.9
+oc new-build --name=jenkins-slave-appdev \
+    --dockerfile="$(< ../templates/docker/skopeo/Dockerfile)" \
+    -n $GUID-jenkins
 
 oc create -f ../templates/nationalparks.pipeline.yaml -n $GUID-jenkins
 oc create -f ../templates/mlbparks.pipeline.yaml -n $GUID-jenkins
