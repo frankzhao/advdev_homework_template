@@ -4,6 +4,26 @@ metadata:
   creationTimestamp: null
   name: mongodb-persistent
 objects:
+- apiVersion: v1
+  stringData:
+    database-name: ${MONGODB_DATABASE}
+    database-password: ${MONGODB_PASSWORD}
+    database-admin-password: ${MONGODB_ADMIN_PASSWORD}
+    database-user: ${MONGODB_USERNAME}
+  kind: Secret
+  metadata:
+    annotations:
+        openshift.io/generated-by: OpenShiftNewApp
+        template.openshift.io/expose-database_name: "{.data['database-name']}"
+        template.openshift.io/expose-database-admin_password: "{.data['database-admin-password']}"
+        template.openshift.io/expose-password: "{.data['database-password']}"
+        template.openshift.io/expose-username: "{.data['database-user']}"
+    creationTimestamp: null
+    labels:
+      app: mongodb
+      template: mongodb-persistent
+    name: mongodb
+  type: Opaque
 - kind: Service
   apiVersion: v1
   metadata:
@@ -49,6 +69,7 @@ objects:
         containers:
           - name: mongo-container
             image: "registry.access.redhat.com/rhscl/mongodb-34-rhel7:latest"
+            imagePullPolicy: IfNotPresent
             ports:
               - containerPort: 27017
             args:
@@ -57,20 +78,30 @@ objects:
               - name: mongo-data
                 mountPath: "/var/lib/mongodb/data"
             env:
-              - name: MONGODB_DATABASE
-                value: ${MONGODB_DATABASE}
               - name: MONGODB_USER
-                value: ${MONGODB_USER}
+                valueFrom:
+                  secretKeyRef:
+                    key: database-user
+                    name: mongodb
               - name: MONGODB_PASSWORD
-                value: ${MONGODB_PASSWORD}
+                valueFrom:
+                  secretKeyRef:
+                    key: database-password
+                    name: mongodb
+              - name: MONGODB_DATABASE
+                valueFrom:
+                  secretKeyRef:
+                    key: database-name
+                    name: mongodb
               - name: MONGODB_ADMIN_PASSWORD
-                value: ${MONGODB_ADMIN_PASSWORD}
+                valueFrom:
+                  secretKeyRef:
+                    key: database-admin-password
+                    name: mongodb
               - name: MONGODB_REPLICA_NAME
                 value: "rs0"
               - name: MONGODB_KEYFILE_VALUE
                 value: "12345678901234567890"
-              - name: MONGODB_SERVICE_NAME
-                value: ${MONGODB_SERVICE_NAME}
             readinessProbe:
               exec:
                 command:

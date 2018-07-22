@@ -19,8 +19,18 @@ oc policy add-role-to-user edit system:serviceaccount:$GUID-jenkins:jenkins
 MONGODB_DATABASE="mongodb"
 MONGODB_USERNAME="mongodb_user"
 MONGODB_PASSWORD="mongodb_password"
-MONGODB_SERVICE_NAME="mongodb-internal"
-oc new-app -f ../templates/mongo-stateful.template.yaml -n $GUID-parks-dev
+MONGODB_SERVICE_NAME="mongodb"
+MONGODB_ADMIN_PASSWORD="mongodb_admin_password"
+MONGODB_VOLUME="4Gi"
+
+oc new-app -f ../templates/mongo-stateful.template.yaml \
+    -n $GUID-parks-dev\
+    --param MONGODB_DATABASE=${MONGODB_DATABASE}\
+    --param MONGODB_USERNAME=${MONGODB_USERNAME}\
+    --param MONGODB_PASSWORD=${MONGODB_PASSWORD}\
+    --param MONGODB_ADMIN_PASSWORD=${MONGODB_ADMIN_PASSWORD}\
+    --param MONGODB_VOLUME=${MONGODB_VOLUME}\
+    --param MONGODB_SERVICE_NAME=${MONGODB_SERVICE_NAME}
 
 # config map
 oc create configmap parks-mongodb-config \
@@ -39,9 +49,9 @@ oc set triggers dc/parksmap --remove-all
 oc expose dc/parksmap --port=8080 --name=parksmap
 oc create route edge parksmap --service=parksmap --port=8080
 oc set probe dc/parksmap --readiness \
-    --get-url=http://:8080/ws/healthz --initial-delay-seconds=30
+    --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30
 oc set probe dc/parksmap --liveness \
-    --get-url=http://:8080/ws/healthz --initial-delay-seconds=30
+    --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30
 oc rollout resume dc/parksmap
 
 # nationalparks
@@ -65,9 +75,9 @@ oc set triggers dc/nationalparks --remove-all
 oc expose dc/nationalparks --port=8080 --name=nationalparks
 oc create route edge nationalparks --service=nationalparks --port=8080
 oc set probe dc/nationalparks --readiness \
-    --get-url=http://:8080/ws/healthz --initial-delay-seconds=30
+    --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30
 oc set probe dc/nationalparks --liveness \
-    --get-url=http://:8080/ws/healthz --initial-delay-seconds=30
+    --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30
 oc rollout resume dc/nationalparks
 
 # mlbparks
