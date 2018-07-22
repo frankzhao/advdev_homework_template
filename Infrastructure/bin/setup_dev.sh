@@ -50,11 +50,11 @@ oc new-app $GUID-parks-dev/nationalparks:0.0-0 --name=nationalparks \
     --allow-missing-imagestream-tags=true \
     -l type=parksmap-backend \
     -e APPNAME="National Parks (Dev)" \
-#    -e DB_HOST=$MONGODB_SERVICE_NAME \
-#    -e DB_PORT=27017 \
-#    -e DB_USERNAME=$MONGODB_USERNAME \
-#    -e DB_PASSWORD=$MONGODB_PASSWORD \
-#    -e DB_NAME=$MONGODB_DATABASE
+    -e DB_HOST=$MONGODB_SERVICE_NAME \
+    -e DB_PORT=27017 \
+    -e DB_USERNAME=$MONGODB_USERNAME \
+    -e DB_PASSWORD=$MONGODB_PASSWORD \
+    -e DB_NAME=$MONGODB_DATABASE \
     -n $GUID-parks-dev
 oc rollout pause dc nationalparks
 oc set volume dc/nationalparks --add \
@@ -80,7 +80,7 @@ oc new-app $GUID-parks-dev/mlbparks:0.0-0 --name=mlbparks \
     -e DB_PORT=27017 \
     -e DB_USERNAME=$MONGODB_USERNAME \
     -e DB_PASSWORD=$MONGODB_PASSWORD \
-    -e DB_NAME=$MONGODB_DATABASE
+    -e DB_NAME=$MONGODB_DATABASE \
     -n $GUID-parks-dev
 oc rollout pause dc mlbparks
 oc set volume dc/mlbparks --add \
