@@ -109,7 +109,6 @@ podTemplate(
 
       // Tag the built image with the production tag.
       openshiftTag alias: 'false', destStream: 'mlbparks', destTag: prodTag, destinationNamespace: "$GUID-parks-dev", namespace: "$GUID-parks-dev", srcStream: 'mlbparks', srcTag: devTag, verbose: 'false'
-}
     }
 
     // Blue/Green Deployment into Production
