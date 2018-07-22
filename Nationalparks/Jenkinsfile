@@ -94,7 +94,7 @@ podTemplate(
     // Run Integration Tests in the Development Environment.
     stage('Integration Tests') {
       echo "Running Integration Tests"
-      sh "curl http://nationalparks.$GUID-parks-dev.svc.cluster.local:8080/ws/health/"
+      sh "curl http://nationalparks.$GUID-parks-dev.svc.cluster.local:8080/ws/healthz/"
       sh "curl http://nationalparks.$GUID-parks-dev.svc.cluster.local:8080/ws/info/"
     }
 
