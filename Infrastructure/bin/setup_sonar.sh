@@ -21,6 +21,8 @@ oc new-app -f ../templates/sonarqube.template.yaml\
   --param POSTGRESQL_VOLUME=4Gi\
   --param GUID=$GUID\
   -n $GUID-sonarqube
+# oc set probe dc/docker-openshift-sonarqube --liveness --get-url=http://:9000/about --initial-delay-seconds=20
+# oc set probe dc/docker-openshift-sonarqube --readiness --get-url=http://:9000/about --initial-delay-seconds=20
 # oc new-app --template=postgresql-persistent --param POSTGRESQL_USER=sonar\
 #   --param POSTGRESQL_PASSWORD=sonar --param POSTGRESQL_DATABASE=sonar\
 #   --param VOLUME_CAPACITY=4Gi --labels=app=sonarqube_db
