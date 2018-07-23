@@ -42,21 +42,35 @@ oc create configmap parks-mongodb-config \
     --from-literal=DB_NAME=${MONGODB_DATABASE}\
     --from-literal=DB_REPLICASET=rs0
 
-# # parksmap
-# oc new-build --binary=true --name=parksmap --image-stream=redhat-openjdk18-openshift:1.2 --allow-missing-imagestream-tags=true
-# oc new-app $GUID-parks-prod/parksmap:0.0-0 --name=parksmap --allow-missing-imagestream-tags=true -l type=parksmap-frontend -e APPNAME="ParksMap (Prod)"
-# oc rollout pause dc parksmap
-# oc set triggers dc/parksmap --remove-all
-# oc expose dc/parksmap --port=8080 --name=parksmap
-# oc create route edge parksmap --service=parksmap --port=8080
-# oc set probe dc/parksmap --readiness \
-#     --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30
-# oc set probe dc/parksmap --liveness \
-#     --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30
-# oc rollout resume dc/parksmap
+# parksmap
+oc new-app $GUID-parks-prod/parksmap-green:0.0 --name=parksmap-green \
+    --allow-missing-imagestream-tags=true \
+    --allow-missing-images=true \
+    -l type=parksmap-frontend \
+    -e APPNAME="ParksMap (Green)"
+oc rollout cancel dc/parksmap-green
+oc set triggers dc/parksmap-green --remove-all
+oc set probe dc/parksmap-green --readiness \
+    --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30
+oc set probe dc/parksmap-green --liveness \
+    --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30
+
+oc new-app $GUID-parks-prod/parksmap-blue:0.0 --name=parksmap-blue \
+    --allow-missing-imagestream-tags=true \
+    --allow-missing-images=true \
+    -l type=parksmap-frontend \
+    -e APPNAME="ParksMap (Blue)"
+oc rollout cancel dc/parksmap-blue
+oc set triggers dc/parksmap-blue --remove-all
+oc set probe dc/parksmap-blue --readiness \
+    --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30
+oc set probe dc/parksmap-blue --liveness \
+    --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30
+
+oc create route edge parksmap --service=parksmap-green --port=8080
 
 # nationalparks
-oc new-app $GUID-parks-prod/nationalparks-green:0.0-0 --name=nationalparks-green \
+oc new-app $GUID-parks-prod/nationalparks-green:0.0 --name=nationalparks-green \
     --allow-missing-imagestream-tags=true \
     --allow-missing-images=true \
     -l type=parksmap-backend \
@@ -75,7 +89,7 @@ oc set probe dc/nationalparks-green --readiness \
 oc set probe dc/nationalparks-green --liveness \
     --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30
 
-oc new-app $GUID-parks-prod/nationalparks-blue:0.0-0 --name=nationalparks-blue \
+oc new-app $GUID-parks-prod/nationalparks-blue:0.0 --name=nationalparks-blue \
     --allow-missing-imagestream-tags=true \
     --allow-missing-images=true \
     -l type=parksmap-backend \
