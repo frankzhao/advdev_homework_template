@@ -23,7 +23,7 @@ MONGODB_SERVICE_NAME="mongodb"
 MONGODB_ADMIN_PASSWORD="mongodb_admin_password"
 MONGODB_VOLUME="4Gi"
 
-oc new-app -f ../templates/mongo-stateful.template.yaml \
+oc new-app -f ./Infrastructure/templates/mongo-stateful.template.yaml \
     -n $GUID-parks-dev\
     --param MONGODB_DATABASE=${MONGODB_DATABASE}\
     --param MONGODB_USERNAME=${MONGODB_USERNAME}\

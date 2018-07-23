@@ -26,9 +26,9 @@ echo "Setting up Nexus in project $GUID-nexus"
 # done
 
 # Ideally just calls a template
-# oc new-app -f ../templates/nexus.yaml --param .....
+# oc new-app -f ./Infrastructure/templates/nexus.yaml --param .....
 # To be Implemented by Student
-oc new-app -f ../templates/nexus.template.yaml \
+oc new-app -f ./Infrastructure/templates/nexus.template.yaml \
   --param GUID=$GUID -n $GUID-nexus
 
 # wait for nexus
