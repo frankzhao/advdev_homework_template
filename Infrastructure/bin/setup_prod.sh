@@ -68,7 +68,7 @@ oc new-app $GUID-parks-prod/nationalparks-green:0.0-0 --name=nationalparks-green
     -e DB_NAME=$MONGODB_DATABASE \
     -n $GUID-parks-prod
 oc rollout cancel dc/nationalparks-green
-oc set env dc/nationalparks-green --from configmap/parks-mongodb-config -n $GUID-parks-dev
+oc set env dc/nationalparks-green --from configmap/parks-mongodb-config -n $GUID-parks-prod
 oc set triggers dc/nationalparks-green --remove-all
 oc set probe dc/nationalparks-green --readiness \
     --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30
@@ -87,7 +87,7 @@ oc new-app $GUID-parks-prod/nationalparks-blue:0.0-0 --name=nationalparks-blue \
     -e DB_NAME=$MONGODB_DATABASE \
     -n $GUID-parks-prod
 oc rollout cancel dc/nationalparks-blue
-oc set env dc/nationalparks-blue --from configmap/parks-mongodb-config -n $GUID-parks-dev
+oc set env dc/nationalparks-blue --from configmap/parks-mongodb-config -n $GUID-parks-prod
 oc set triggers dc/nationalparks-blue --remove-all
 oc set probe dc/nationalparks-blue --readiness \
     --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30
@@ -109,7 +109,7 @@ oc new-app $GUID-parks-prod/mlbparks-green:0.0 --name=mlbparks-green \
     -e DB_NAME=$MONGODB_DATABASE \
     -n $GUID-parks-prod
 oc rollout cancel dc/mlbparks-green
-oc set env dc/mlbparks-green --from configmap/parks-mongodb-config -n $GUID-parks-dev
+oc set env dc/mlbparks-green --from configmap/parks-mongodb-config -n $GUID-parks-prod
 oc set triggers dc/mlbparks-green --remove-all
 oc set probe dc/mlbparks-green --readiness \
     --get-url=http://:8080/ws/healthz --initial-delay-seconds=30
@@ -128,7 +128,7 @@ oc new-app $GUID-parks-prod/mlbparks-blue:0.0 --name=mlbparks-blue \
     -e DB_NAME=$MONGODB_DATABASE \
     -n $GUID-parks-prod
 oc rollout cancel dc/mlbparks-blue
-oc set env dc/mlbparks-blue --from configmap/parks-mongodb-config -n $GUID-parks-dev
+oc set env dc/mlbparks-blue --from configmap/parks-mongodb-config -n $GUID-parks-prod
 oc set triggers dc/mlbparks-blue --remove-all
 oc set probe dc/mlbparks-blue --readiness \
     --get-url=http://:8080/ws/healthz --initial-delay-seconds=30
