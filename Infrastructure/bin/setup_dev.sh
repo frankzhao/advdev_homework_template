@@ -67,10 +67,7 @@ oc new-app $GUID-parks-dev/nationalparks:0.0-0 --name=nationalparks \
     -e DB_NAME=$MONGODB_DATABASE \
     -n $GUID-parks-dev
 oc rollout pause dc nationalparks
-oc set volume dc/nationalparks --add \
-    --name=parks-mongodb-config \
-    --configmap-name=parks-mongodb-config \
-    -n $GUID-parks-dev
+oc set env dc/nationalparks --from configmap/parks-mongodb-config -n $GUID-parks-dev
 oc set triggers dc/nationalparks --remove-all
 oc expose dc/nationalparks --port=8080 --name=nationalparks
 oc create route edge nationalparks --service=nationalparks --port=8080
@@ -78,6 +75,8 @@ oc set probe dc/nationalparks --readiness \
     --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30
 oc set probe dc/nationalparks --liveness \
     --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30
+oc set deployment-hook dc/nationalparks --post -- \
+    curl -s http://:8080/ws/data/load/
 oc rollout resume dc/nationalparks
 
 # mlbparks
@@ -93,10 +92,7 @@ oc new-app $GUID-parks-dev/mlbparks:0.0-0 --name=mlbparks \
     -e DB_NAME=$MONGODB_DATABASE \
     -n $GUID-parks-dev
 oc rollout pause dc mlbparks
-oc set volume dc/mlbparks --add \
-    --name=parks-mongodb-config \
-    --configmap-name=parks-mongodb-config \
-    -n $GUID-parks-dev
+oc set env dc/mlbparks --from configmap/parks-mongodb-config -n $GUID-parks-dev
 oc set triggers dc/mlbparks --remove-all
 oc expose dc/mlbparks --port=8080 --name=mlbparks
 oc create route edge mlbparks --service=mlbparks --port=8080
@@ -104,6 +100,8 @@ oc set probe dc/mlbparks --readiness \
     --get-url=http://:8080/ws/healthz --initial-delay-seconds=30
 oc set probe dc/mlbparks --liveness \
     --get-url=http://:8080/ws/healthz --initial-delay-seconds=30
+oc set deployment-hook dc/mlbparks --post -- \
+    curl -s http://:8080/ws/data/load/
 oc rollout resume dc/mlbparks
 
 # oc new-project $GUID-nationalparks-dev --display-name "Parks Development Environment"
