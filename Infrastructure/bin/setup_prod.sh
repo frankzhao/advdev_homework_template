@@ -82,8 +82,9 @@ oc create configmap parks-mongodb-config \
 # oc rollout resume dc/nationalparks
 
 # mlbparks
-oc new-app $GUID-parks-prod/mlbparks-green:0.0 --name=mlbparks \
+oc new-app $GUID-parks-prod/mlbparks-green:0.0 --name=mlbparks-green \
     --allow-missing-imagestream-tags=true \
+    --allow-missing-images=true \
     -l type=parksmap-backend \
     -e APPNAME="MLB Parks (Prod)" \
     -e DB_HOST=$MONGODB_SERVICE_NAME \
@@ -98,16 +99,17 @@ oc set volume dc/mlbparks-green --add \
     --configmap-name=parks-mongodb-config \
     -n $GUID-parks-prod
 oc set triggers dc/mlbparks-green --remove-all
-oc expose dc/mlbparks-green --port=8080 --name=mlbparks-green
-oc create route edge mlbparks-green --service=mlbparks-green --port=8080
+# oc expose dc/mlbparks-green --port=8080 --name=mlbparks-green
+# oc create route edge mlbparks-green --service=mlbparks-green --port=8080
 oc set probe dc/mlbparks-green --readiness \
     --get-url=http://:8080/ws/healthz --initial-delay-seconds=30
 oc set probe dc/mlbparks-green --liveness \
     --get-url=http://:8080/ws/healthz --initial-delay-seconds=30
 oc rollout resume dc/mlbparks-green
 
-oc new-app $GUID-parks-prod/mlbparks-blue:0.0 --name=mlbparks \
+oc new-app $GUID-parks-prod/mlbparks-blue:0.0 --name=mlbparks-blue \
     --allow-missing-imagestream-tags=true \
+    --allow-missing-images=true \
     -l type=parksmap-backend \
     -e APPNAME="MLB Parks (Prod)" \
     -e DB_HOST=$MONGODB_SERVICE_NAME \
@@ -122,10 +124,12 @@ oc set volume dc/mlbparks-blue --add \
     --configmap-name=parks-mongodb-config \
     -n $GUID-parks-prod
 oc set triggers dc/mlbparks-blue --remove-all
-oc expose dc/mlbparks-blue --port=8080 --name=mlbparks-blue
-oc create route edge mlbparks-blue --service=mlbparks-blue --port=8080
+# oc expose dc/mlbparks-blue --port=8080 --name=mlbparks-blue
+# oc create route edge mlbparks-blue --service=mlbparks-blue --port=8080
 oc set probe dc/mlbparks-blue --readiness \
     --get-url=http://:8080/ws/healthz --initial-delay-seconds=30
 oc set probe dc/mlbparks-blue --liveness \
     --get-url=http://:8080/ws/healthz --initial-delay-seconds=30
 oc rollout resume dc/mlbparks-blue
+
+oc create route edge mlbparks --service=mlbparks-green --port=8080
