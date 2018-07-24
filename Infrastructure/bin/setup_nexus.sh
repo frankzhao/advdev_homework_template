@@ -36,9 +36,13 @@ while : ; do
   echo "Checking if Nexus is Ready..."
   oc get pod -n ${GUID}-nexus|grep '\-1\-'|grep -v deploy|grep "1/1"
   [[ "$?" == "1" ]] || break
-  echo "...no. Sleeping 60 seconds."
-  sleep 60
+  echo "...no. Sleeping 30 seconds."
+  sleep 30
 done
+
+# expose registry
+oc expose dc/nexus3 --port=5000 --name=nexus-registry
+oc create route edge nexus-registry --service=nexus-registry --port=5000
 
 curl -o setup_nexus3.sh -s https://raw.githubusercontent.com/wkulhanek/ocp_advanced_development_resources/master/nexus/setup_nexus3.sh
 chmod +x setup_nexus3.sh
@@ -46,6 +50,3 @@ chmod +x setup_nexus3.sh
     http://$(oc get route nexus3 --template='{{ .spec.host }}') -n $GUID-nexus
 rm setup_nexus3.sh
 
-# expose registry
-oc expose dc/nexus3 --port=5000 --name=nexus-registry
-oc create route edge nexus-registry --service=nexus-registry --port=5000

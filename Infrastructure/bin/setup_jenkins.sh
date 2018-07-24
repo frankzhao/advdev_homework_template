@@ -27,7 +27,7 @@ echo "Setting up Jenkins in project ${GUID}-jenkins from Git Repo ${REPO} for Cl
 # * CLUSTER: the base url of the cluster used (e.g. na39.openshift.opentlc.com)
 
 # To be Implemented by Student
-oc policy add-role-to-user edit system:serviceaccount:$GUID-jenkins:jenkins
+oc policy add-role-to-user edit system:serviceaccount:$GUID-jenkins:jenkins -n $GUID-jenkins
 
 oc new-app jenkins-persistent \
     --param ENABLE_OAUTH=true \
