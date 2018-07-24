@@ -41,12 +41,12 @@ while : ; do
 done
 
 # expose registry
-oc expose dc/nexus3 --port=5000 --name=nexus-registry
-oc create route edge nexus-registry --service=nexus-registry --port=5000
+oc expose dc/nexus3 --port=5000 --name=nexus-registry -n $GUID-nexus
+oc create route edge nexus-registry --service=nexus-registry --port=5000 -n $GUID-nexus
 
 curl -o setup_nexus3.sh -s https://raw.githubusercontent.com/wkulhanek/ocp_advanced_development_resources/master/nexus/setup_nexus3.sh
 chmod +x setup_nexus3.sh
 ./setup_nexus3.sh admin admin123 \
-    http://$(oc get route nexus3 --template='{{ .spec.host }}') -n $GUID-nexus
+    http://$(oc get route nexus3 --template='{{ .spec.host }}' -n $GUID-nexus)
 rm setup_nexus3.sh
 
