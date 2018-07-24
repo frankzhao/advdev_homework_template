@@ -13,9 +13,8 @@ echo "Setting up Parks Production Environment in project ${GUID}-parks-prod"
 # The Green services/routes need to be active initially to guarantee a successful grading pipeline run.
 
 # To be Implemented by Student
-oc project $GUID-parks-prod
-oc policy add-role-to-user view --serviceaccount=default
-oc policy add-role-to-user edit system:serviceaccount:$GUID-jenkins:jenkins
+oc policy add-role-to-user view --serviceaccount=default -n $GUID-parks-prod
+oc policy add-role-to-user edit system:serviceaccount:$GUID-jenkins:jenkins -n $GUID-parks-prod
 
 MONGODB_DATABASE="mongodb"
 MONGODB_USERNAME="mongodb_user"
@@ -40,34 +39,37 @@ oc create configmap parks-mongodb-config \
     --from-literal=DB_USERNAME=${MONGODB_USERNAME}\
     --from-literal=DB_PASSWORD=${MONGODB_PASSWORD}\
     --from-literal=DB_NAME=${MONGODB_DATABASE}\
-    --from-literal=DB_REPLICASET=rs0
+    --from-literal=DB_REPLICASET=rs0 \
+    -n $GUID-parks-prod
 
 # parksmap
 oc new-app $GUID-parks-prod/parksmap-green:0.0 --name=parksmap-green \
     --allow-missing-imagestream-tags=true \
     --allow-missing-images=true \
     -l type=parksmap-frontend \
-    -e APPNAME="ParksMap (Green)"
-oc rollout cancel dc/parksmap-green
-oc set triggers dc/parksmap-green --remove-all
+    -e APPNAME="ParksMap (Green)"\
+    -n $GUID-parks-prod
+oc rollout cancel dc/parksmap-green -n $GUID-parks-prod
+oc set triggers dc/parksmap-green --remove-all -n $GUID-parks-prod
 oc set probe dc/parksmap-green --readiness \
-    --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30
+    --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30 -n $GUID-parks-prod
 oc set probe dc/parksmap-green --liveness \
-    --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30
+    --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30 -n $GUID-parks-prod
 
 oc new-app $GUID-parks-prod/parksmap-blue:0.0 --name=parksmap-blue \
     --allow-missing-imagestream-tags=true \
     --allow-missing-images=true \
     -l type=parksmap-frontend \
-    -e APPNAME="ParksMap (Blue)"
-oc rollout cancel dc/parksmap-blue
-oc set triggers dc/parksmap-blue --remove-all
+    -e APPNAME="ParksMap (Blue)"\
+    -n $GUID-parks-prod
+oc rollout cancel dc/parksmap-blue -n $GUID-parks-prod
+oc set triggers dc/parksmap-blue --remove-all -n $GUID-parks-prod
 oc set probe dc/parksmap-blue --readiness \
-    --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30
+    --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30 -n $GUID-parks-prod
 oc set probe dc/parksmap-blue --liveness \
-    --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30
+    --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30 -n $GUID-parks-prod
 
-oc create route edge parksmap --service=parksmap-green --port=8080
+oc create route edge parksmap --service=parksmap-green --port=8080 -n $GUID-parks-prod
 
 # nationalparks
 oc new-app $GUID-parks-prod/nationalparks-green:0.0 --name=nationalparks-green \
@@ -81,13 +83,13 @@ oc new-app $GUID-parks-prod/nationalparks-green:0.0 --name=nationalparks-green \
     -e DB_PASSWORD=$MONGODB_PASSWORD \
     -e DB_NAME=$MONGODB_DATABASE \
     -n $GUID-parks-prod
-oc rollout cancel dc/nationalparks-green
+oc rollout cancel dc/nationalparks-green -n $GUID-parks-prod
 oc set env dc/nationalparks-green --from configmap/parks-mongodb-config -n $GUID-parks-prod
-oc set triggers dc/nationalparks-green --remove-all
+oc set triggers dc/nationalparks-green --remove-all -n $GUID-parks-prod
 oc set probe dc/nationalparks-green --readiness \
-    --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30
+    --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30 -n $GUID-parks-prod
 oc set probe dc/nationalparks-green --liveness \
-    --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30
+    --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30 -n $GUID-parks-prod
 
 oc new-app $GUID-parks-prod/nationalparks-blue:0.0 --name=nationalparks-blue \
     --allow-missing-imagestream-tags=true \
@@ -100,15 +102,15 @@ oc new-app $GUID-parks-prod/nationalparks-blue:0.0 --name=nationalparks-blue \
     -e DB_PASSWORD=$MONGODB_PASSWORD \
     -e DB_NAME=$MONGODB_DATABASE \
     -n $GUID-parks-prod
-oc rollout cancel dc/nationalparks-blue
+oc rollout cancel dc/nationalparks-blue -n $GUID-parks-prod
 oc set env dc/nationalparks-blue --from configmap/parks-mongodb-config -n $GUID-parks-prod
-oc set triggers dc/nationalparks-blue --remove-all
+oc set triggers dc/nationalparks-blue --remove-all -n $GUID-parks-prod
 oc set probe dc/nationalparks-blue --readiness \
-    --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30
+    --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30 -n $GUID-parks-prod
 oc set probe dc/nationalparks-blue --liveness \
-    --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30
+    --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30 -n $GUID-parks-prod
 
-oc create route edge nationalparks --service=nationalparks-green --port=8080
+oc create route edge nationalparks --service=nationalparks-green --port=8080 -n $GUID-parks-prod
 
 # mlbparks
 oc new-app $GUID-parks-prod/mlbparks-green:0.0 --name=mlbparks-green \
@@ -122,13 +124,13 @@ oc new-app $GUID-parks-prod/mlbparks-green:0.0 --name=mlbparks-green \
     -e DB_PASSWORD=$MONGODB_PASSWORD \
     -e DB_NAME=$MONGODB_DATABASE \
     -n $GUID-parks-prod
-oc rollout cancel dc/mlbparks-green
+oc rollout cancel dc/mlbparks-green -n $GUID-parks-prod
 oc set env dc/mlbparks-green --from configmap/parks-mongodb-config -n $GUID-parks-prod
-oc set triggers dc/mlbparks-green --remove-all
+oc set triggers dc/mlbparks-green --remove-all -n $GUID-parks-prod
 oc set probe dc/mlbparks-green --readiness \
-    --get-url=http://:8080/ws/healthz --initial-delay-seconds=30
+    --get-url=http://:8080/ws/healthz --initial-delay-seconds=30 -n $GUID-parks-prod
 oc set probe dc/mlbparks-green --liveness \
-    --get-url=http://:8080/ws/healthz --initial-delay-seconds=30
+    --get-url=http://:8080/ws/healthz --initial-delay-seconds=30 -n $GUID-parks-prod
 
 oc new-app $GUID-parks-prod/mlbparks-blue:0.0 --name=mlbparks-blue \
     --allow-missing-imagestream-tags=true \
@@ -143,10 +145,10 @@ oc new-app $GUID-parks-prod/mlbparks-blue:0.0 --name=mlbparks-blue \
     -n $GUID-parks-prod
 oc rollout cancel dc/mlbparks-blue
 oc set env dc/mlbparks-blue --from configmap/parks-mongodb-config -n $GUID-parks-prod
-oc set triggers dc/mlbparks-blue --remove-all
+oc set triggers dc/mlbparks-blue --remove-all -n $GUID-parks-prod
 oc set probe dc/mlbparks-blue --readiness \
-    --get-url=http://:8080/ws/healthz --initial-delay-seconds=30
+    --get-url=http://:8080/ws/healthz --initial-delay-seconds=30 -n $GUID-parks-prod
 oc set probe dc/mlbparks-blue --liveness \
-    --get-url=http://:8080/ws/healthz --initial-delay-seconds=30
+    --get-url=http://:8080/ws/healthz --initial-delay-seconds=30 -n $GUID-parks-prod
 
-oc create route edge mlbparks --service=mlbparks-green --port=8080
+oc create route edge mlbparks --service=mlbparks-green --port=8080 -n $GUID-parks-prod
