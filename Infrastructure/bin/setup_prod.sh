@@ -69,7 +69,9 @@ oc set probe dc/parksmap-blue --readiness \
 oc set probe dc/parksmap-blue --liveness \
     --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30 -n $GUID-parks-prod
 
-oc create route edge parksmap --service=parksmap-green --port=8080 -n $GUID-parks-prod
+oc create service clusterip parksmap-green --tcp=8080 -n $GUID-parks-prod
+oc create service clusterip parksmap-blue --tcp=8080 -n $GUID-parks-prod
+oc expose svc/parksmap-green --name=parksmap --port=8080 -n $GUID-parks-prod
 
 # nationalparks
 oc new-app $GUID-parks-prod/nationalparks-green:0.0 --name=nationalparks-green \
@@ -110,7 +112,9 @@ oc set probe dc/nationalparks-blue --readiness \
 oc set probe dc/nationalparks-blue --liveness \
     --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30 -n $GUID-parks-prod
 
-oc create route edge nationalparks --service=nationalparks-green --port=8080 -n $GUID-parks-prod
+oc create service clusterip nationalparks-green --tcp=8080 -n $GUID-parks-prod
+oc create service clusterip nationalparks-blue --tcp=8080 -n $GUID-parks-prod
+oc expose svc/nationalparks-green --name=nationalparks --port=8080 -n $GUID-parks-prod
 
 # mlbparks
 oc new-app $GUID-parks-prod/mlbparks-green:0.0 --name=mlbparks-green \
@@ -151,4 +155,6 @@ oc set probe dc/mlbparks-blue --readiness \
 oc set probe dc/mlbparks-blue --liveness \
     --get-url=http://:8080/ws/healthz --initial-delay-seconds=30 -n $GUID-parks-prod
 
-oc create route edge mlbparks --service=mlbparks-green --port=8080 -n $GUID-parks-prod
+oc create service clusterip mlbparks-green --tcp=8080 -n $GUID-parks-prod
+oc create service clusterip mlbparks-blue --tcp=8080 -n $GUID-parks-prod
+oc expose svc/mlbparks-green --name=mlbparks --port=8080 -n $GUID-parks-prod
