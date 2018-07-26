@@ -158,3 +158,12 @@ oc set probe dc/mlbparks-blue --liveness \
 oc create service clusterip mlbparks-green --tcp=8080 -n $GUID-parks-prod
 oc create service clusterip mlbparks-blue --tcp=8080 -n $GUID-parks-prod
 oc expose svc/mlbparks-green --name=mlbparks --port=8080 -n $GUID-parks-prod
+
+oc expose svc/mlbparks-green -n $GUID-parks-prod
+oc expose svc/mlbparks-blue -n $GUID-parks-prod
+
+oc expose svc/nationalparks-green -n $GUID-parks-prod
+oc expose svc/nationalparks-blue -n $GUID-parks-prod
+
+oc expose svc/parksmap-green -n $GUID-parks-prod
+oc expose svc/parksmap-blue -n $GUID-parks-prod
