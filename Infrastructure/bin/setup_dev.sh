@@ -113,8 +113,8 @@ oc create service clusterip mlbparks --tcp=8080 -n $GUID-parks-dev
 oc expose svc/mlbparks --port=8080 --name=mlbparks -n $GUID-parks-dev
 # oc create route mlbparks --service=mlbparks --port=8080 -n $GUID-parks-dev
 oc set probe dc/mlbparks --readiness \
-    --get-url=http://:8080/ws/healthz --initial-delay-seconds=30 -n $GUID-parks-dev
+    --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30 -n $GUID-parks-dev
 oc set probe dc/mlbparks --liveness \
-    --get-url=http://:8080/ws/healthz --initial-delay-seconds=30 -n $GUID-parks-dev
+    --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30 -n $GUID-parks-dev
 # oc set deployment-hook dc/mlbparks --post -- \
 #     curl -s http://:8080/ws/data/load/ -n $GUID-parks-dev
