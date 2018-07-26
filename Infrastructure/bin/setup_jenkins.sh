@@ -31,12 +31,9 @@ oc policy add-role-to-user edit system:serviceaccount:$GUID-jenkins:jenkins -n $
 
 oc new-app jenkins-persistent \
     --param ENABLE_OAUTH=true \
-    --param MEMORY_LIMIT=2Gi \
+    --param MEMORY_LIMIT=1Gi \
     --param VOLUME_CAPACITY=4Gi \
     -n $GUID-jenkins
-# oc set resources dc/jenkins --limits=cpu=1\
-#     --requests=memory=1.5Gi,cpu=1\
-#     -n $GUID-jenkins
 
 # build skopeo slave
 # docker build -t docker-registry-default.$CLUSTER/$GUID-jenkins/jenkins-slave-appdev:v3.9 ./Infrastructure/templates/docker/skopeo

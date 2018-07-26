@@ -134,7 +134,7 @@ oc set triggers dc/mlbparks-green --remove-all -n $GUID-parks-prod
 oc set probe dc/mlbparks-green --readiness \
     --get-url=http://:8080/ws/healthz --initial-delay-seconds=30 -n $GUID-parks-prod
 oc set probe dc/mlbparks-green --liveness \
-    --get-url=http://:8080/ws/healthz --initial-delay-seconds=30 -n $GUID-parks-prod
+    --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30 -n $GUID-parks-prod
 
 oc new-app $GUID-parks-prod/mlbparks-blue:0.0 --name=mlbparks-blue \
     --allow-missing-imagestream-tags=true \
@@ -151,9 +151,9 @@ oc rollout cancel dc/mlbparks-blue
 oc set env dc/mlbparks-blue --from configmap/parks-mongodb-config -n $GUID-parks-prod
 oc set triggers dc/mlbparks-blue --remove-all -n $GUID-parks-prod
 oc set probe dc/mlbparks-blue --readiness \
-    --get-url=http://:8080/ws/healthz --initial-delay-seconds=30 -n $GUID-parks-prod
+    --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30 -n $GUID-parks-prod
 oc set probe dc/mlbparks-blue --liveness \
-    --get-url=http://:8080/ws/healthz --initial-delay-seconds=30 -n $GUID-parks-prod
+    --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30 -n $GUID-parks-prod
 
 oc create service clusterip mlbparks-green --tcp=8080 -n $GUID-parks-prod
 oc create service clusterip mlbparks-blue --tcp=8080 -n $GUID-parks-prod
