@@ -52,9 +52,11 @@ oc new-app $GUID-parks-prod/parksmap-green:0.0 --name=parksmap-green \
 oc rollout cancel dc/parksmap-green -n $GUID-parks-prod
 oc set triggers dc/parksmap-green --remove-all -n $GUID-parks-prod
 oc set probe dc/parksmap-green --readiness \
-    --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30 -n $GUID-parks-prod
+    --get-url=http://:8080/ws/backends/list --initial-delay-seconds=30 \
+    --failure-threshold 3 -n $GUID-parks-prod
 oc set probe dc/parksmap-green --liveness \
-    --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30 -n $GUID-parks-prod
+    --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30 \
+    --failure-threshold 3 -n $GUID-parks-prod
 
 oc new-app $GUID-parks-prod/parksmap-blue:0.0 --name=parksmap-blue \
     --allow-missing-imagestream-tags=true \
@@ -65,9 +67,11 @@ oc new-app $GUID-parks-prod/parksmap-blue:0.0 --name=parksmap-blue \
 oc rollout cancel dc/parksmap-blue -n $GUID-parks-prod
 oc set triggers dc/parksmap-blue --remove-all -n $GUID-parks-prod
 oc set probe dc/parksmap-blue --readiness \
-    --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30 -n $GUID-parks-prod
+    --get-url=http://:8080/ws/backends/list --initial-delay-seconds=30 \
+    --failure-threshold 3 -n $GUID-parks-prod
 oc set probe dc/parksmap-blue --liveness \
-    --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30 -n $GUID-parks-prod
+    --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30 \
+    --failure-threshold 3 -n $GUID-parks-prod
 
 oc create service clusterip parksmap-green --tcp=8080 -n $GUID-parks-prod
 oc create service clusterip parksmap-blue --tcp=8080 -n $GUID-parks-prod
@@ -89,9 +93,11 @@ oc rollout cancel dc/nationalparks-green -n $GUID-parks-prod
 oc set env dc/nationalparks-green --from configmap/parks-mongodb-config -n $GUID-parks-prod
 oc set triggers dc/nationalparks-green --remove-all -n $GUID-parks-prod
 oc set probe dc/nationalparks-green --readiness \
-    --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30 -n $GUID-parks-prod
+    --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30 \
+    --failure-threshold 3 -n $GUID-parks-prod
 oc set probe dc/nationalparks-green --liveness \
-    --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30 -n $GUID-parks-prod
+    --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30 \
+    --failure-threshold 3 -n $GUID-parks-prod
 
 oc new-app $GUID-parks-prod/nationalparks-blue:0.0 --name=nationalparks-blue \
     --allow-missing-imagestream-tags=true \
@@ -108,9 +114,11 @@ oc rollout cancel dc/nationalparks-blue -n $GUID-parks-prod
 oc set env dc/nationalparks-blue --from configmap/parks-mongodb-config -n $GUID-parks-prod
 oc set triggers dc/nationalparks-blue --remove-all -n $GUID-parks-prod
 oc set probe dc/nationalparks-blue --readiness \
-    --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30 -n $GUID-parks-prod
+    --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30 \
+    --failure-threshold 3 -n $GUID-parks-prod
 oc set probe dc/nationalparks-blue --liveness \
-    --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30 -n $GUID-parks-prod
+    --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30 \
+    --failure-threshold 3 -n $GUID-parks-prod
 
 oc create service clusterip nationalparks-green --tcp=8080 -n $GUID-parks-prod
 oc create service clusterip nationalparks-blue --tcp=8080 -n $GUID-parks-prod
