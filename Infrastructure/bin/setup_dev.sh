@@ -118,3 +118,7 @@ oc set probe dc/mlbparks --liveness \
     --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30 -n $GUID-parks-dev
 # oc set deployment-hook dc/mlbparks --post -- \
 #     curl -s http://:8080/ws/data/load/ -n $GUID-parks-dev
+
+oc set resources dc/parksmap --limits=cpu=1,memory=1Gi --requests=memory=0.5Gi,cpu=1 -n $GUID-parks-dev
+oc set resources dc/mlbparks --limits=cpu=1,memory=1Gi --requests=memory=0.5Gi,cpu=1 -n $GUID-parks-dev
+oc set resources dc/nationalparks --limits=cpu=1,memory=1Gi --requests=memory=0.5Gi,cpu=1 -n $GUID-parks-dev

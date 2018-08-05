@@ -253,7 +253,7 @@ objects:
               memory: 3Gi
             requests:
               cpu: "1"
-              memory: 2.0Gi
+              memory: 2Gi
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
         dnsPolicy: ClusterFirst

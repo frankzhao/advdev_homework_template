@@ -175,3 +175,10 @@ oc expose svc/mlbparks-green --name=mlbparks --port=8080 -n $GUID-parks-prod
 
 # oc expose svc/parksmap-green -n $GUID-parks-prod
 # oc expose svc/parksmap-blue -n $GUID-parks-prod
+
+oc set resources dc/parksmap-green --limits=cpu=1,memory=1Gi --requests=memory=0.5Gi,cpu=1 -n $GUID-parks-prod
+oc set resources dc/parksmap-blue --limits=cpu=1,memory=1Gi --requests=memory=0.5Gi,cpu=1 -n $GUID-parks-prod
+oc set resources dc/mlbparks-blue --limits=cpu=1,memory=1Gi --requests=memory=0.5Gi,cpu=1 -n $GUID-parks-prod
+oc set resources dc/mlbparks-green --limits=cpu=1,memory=1Gi --requests=memory=0.5Gi,cpu=1 -n $GUID-parks-prod
+oc set resources dc/nationalparks-green --limits=cpu=1,memory=1Gi --requests=memory=0.5Gi,cpu=1 -n $GUID-parks-prod
+oc set resources dc/nationalparks-blue --limits=cpu=1,memory=1Gi --requests=memory=0.5Gi,cpu=1 -n $GUID-parks-prod
