@@ -52,11 +52,11 @@ oc new-app $GUID-parks-prod/parksmap-green:0.0 --name=parksmap-green \
 oc rollout cancel dc/parksmap-green -n $GUID-parks-prod
 oc set triggers dc/parksmap-green --remove-all -n $GUID-parks-prod
 oc set probe dc/parksmap-green --readiness \
-    --get-url=http://:8080/ws/appname/ --initial-delay-seconds=30 \
-    --failure-threshold 3 -n $GUID-parks-prod
+    --get-url=http://:8080/ws/appname/ --initial-delay-seconds=60 \
+    --failure-threshold 5 -n $GUID-parks-prod
 oc set probe dc/parksmap-green --liveness \
-    --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30 \
-    --failure-threshold 3 -n $GUID-parks-prod
+    --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=60 \
+    --failure-threshold 5 -n $GUID-parks-prod
 
 oc new-app $GUID-parks-prod/parksmap-blue:0.0 --name=parksmap-blue \
     --allow-missing-imagestream-tags=true \
@@ -67,11 +67,11 @@ oc new-app $GUID-parks-prod/parksmap-blue:0.0 --name=parksmap-blue \
 oc rollout cancel dc/parksmap-blue -n $GUID-parks-prod
 oc set triggers dc/parksmap-blue --remove-all -n $GUID-parks-prod
 oc set probe dc/parksmap-blue --readiness \
-    --get-url=http://:8080/ws/appname/ --initial-delay-seconds=30 \
-    --failure-threshold 3 -n $GUID-parks-prod
+    --get-url=http://:8080/ws/appname/ --initial-delay-seconds=60 \
+    --failure-threshold 5 -n $GUID-parks-prod
 oc set probe dc/parksmap-blue --liveness \
-    --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30 \
-    --failure-threshold 3 -n $GUID-parks-prod
+    --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=60 \
+    --failure-threshold 5 -n $GUID-parks-prod
 
 oc create service clusterip parksmap-green --tcp=8080 -n $GUID-parks-prod
 oc create service clusterip parksmap-blue --tcp=8080 -n $GUID-parks-prod
