@@ -136,8 +136,8 @@ podTemplate(
       sh "oc patch route/nationalparks -p '{\"spec\":{\"to\":{\"name\":\"${destApp}\"}}}' -n $GUID-parks-prod"
       // sh "oc rollout latest dc/${destApp} -n $GUID-parks-prod"
       // sh "oc rollout status dc/${destApp} --watch -n $GUID-parks-prod"
-      // sh "oc scale dc/${destApp} --replicas=1 -n $GUID-parks-prod"
-      // sh "oc scale dc/${activeApp} --replicas=0 -n $GUID-parks-prod"
+      sh "oc scale dc/${destApp} --replicas=1 -n $GUID-parks-prod"
+      sh "oc scale dc/${activeApp} --replicas=0 -n $GUID-parks-prod"
     }
 
   }
