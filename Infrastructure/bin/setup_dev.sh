@@ -80,8 +80,9 @@ oc new-app $GUID-parks-dev/nationalparks:0.0-0 --name=nationalparks \
 # oc rollout cancel dc/nationalparks -n $GUID-parks-dev
 oc set env dc/nationalparks --from configmap/parks-mongodb-config -n $GUID-parks-dev
 oc set triggers dc/nationalparks --remove-all -n $GUID-parks-dev
-oc create service clusterip nationalparks --tcp=8080 -n $GUID-parks-dev
-oc expose svc/nationalparks --port=8080 --name=nationalparks -n $GUID-parks-dev
+# oc create service clusterip nationalparks --tcp=8080 -n $GUID-parks-dev
+oc expose dc/nationalparks --port=8080 -n $GUID-parks-dev
+oc expose svc/nationalparks
 # oc create route nationalparks --service=nationalparks --port=8080 -n $GUID-parks-dev
 oc set probe dc/nationalparks --readiness \
     --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30 -n $GUID-parks-dev
@@ -109,8 +110,9 @@ oc new-app $GUID-parks-dev/mlbparks:0.0-0 --name=mlbparks \
 # oc rollout cancel dc/mlbparks -n $GUID-parks-dev
 oc set env dc/mlbparks --from configmap/parks-mongodb-config -n $GUID-parks-dev
 oc set triggers dc/mlbparks --remove-all -n $GUID-parks-dev
-oc create service clusterip mlbparks --tcp=8080 -n $GUID-parks-dev
-oc expose svc/mlbparks --port=8080 --name=mlbparks -n $GUID-parks-dev
+# oc create service clusterip mlbparks --tcp=8080 -n $GUID-parks-dev
+oc expose dc/mlbparks --port=8080 -n $GUID-parks-dev
+oc expose svc/mlbparks
 # oc create route mlbparks --service=mlbparks --port=8080 -n $GUID-parks-dev
 oc set probe dc/mlbparks --readiness \
     --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30 -n $GUID-parks-dev
