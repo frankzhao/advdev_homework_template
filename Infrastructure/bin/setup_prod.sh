@@ -140,7 +140,7 @@ oc rollout cancel dc/mlbparks-green -n $GUID-parks-prod
 oc set env dc/mlbparks-green --from configmap/parks-mongodb-config -n $GUID-parks-prod
 oc set triggers dc/mlbparks-green --remove-all -n $GUID-parks-prod
 oc set probe dc/mlbparks-green --readiness \
-    --get-url=http://:8080/ws/healthz --initial-delay-seconds=30 -n $GUID-parks-prod
+    --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30 -n $GUID-parks-prod
 oc set probe dc/mlbparks-green --liveness \
     --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30 -n $GUID-parks-prod
 
