@@ -155,7 +155,7 @@ oc new-app $GUID-parks-prod/mlbparks-blue:0.0 --name=mlbparks-blue \
     -e DB_PASSWORD=$MONGODB_PASSWORD \
     -e DB_NAME=$MONGODB_DATABASE \
     -n $GUID-parks-prod
-oc rollout cancel dc/mlbparks-blue
+oc rollout cancel dc/mlbparks-blue -n $GUID-parks-prod
 oc set env dc/mlbparks-blue --from configmap/parks-mongodb-config -n $GUID-parks-prod
 oc set triggers dc/mlbparks-blue --remove-all -n $GUID-parks-prod
 oc set probe dc/mlbparks-blue --readiness \
@@ -176,8 +176,8 @@ oc expose svc/mlbparks-green --name=mlbparks --port=8080 -n $GUID-parks-prod
 # oc expose svc/parksmap-green -n $GUID-parks-prod
 # oc expose svc/parksmap-blue -n $GUID-parks-prod
 
-oc set resources dc/parksmap-green --limits=memory=1Gi --requests=memory=0.5Gi -n $GUID-parks-prod
 oc set resources dc/parksmap-blue --limits=memory=1Gi --requests=memory=0.5Gi -n $GUID-parks-prod
+oc set resources dc/parksmap-green --limits=memory=1Gi --requests=memory=0.5Gi -n $GUID-parks-prod
 oc set resources dc/mlbparks-blue --limits=memory=1Gi --requests=memory=0.5Gi -n $GUID-parks-prod
 oc set resources dc/mlbparks-green --limits=memory=1Gi --requests=memory=0.5Gi -n $GUID-parks-prod
 oc set resources dc/nationalparks-green --limits=memory=1Gi --requests=memory=0.5Gi -n $GUID-parks-prod
