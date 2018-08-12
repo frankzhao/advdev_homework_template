@@ -36,8 +36,8 @@ while : ; do
   echo "Checking if Nexus is Ready..."
   oc get pod -n ${GUID}-nexus|grep '\-1\-'|grep -v deploy|grep "1/1"
   [[ "$?" == "1" ]] || break
-  echo "...no. Sleeping 30 seconds."
-  sleep 30
+  echo "...no. Sleeping 60 seconds."
+  sleep 60
 done
 
 # expose registry
