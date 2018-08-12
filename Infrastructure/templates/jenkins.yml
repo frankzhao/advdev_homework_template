@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Template
 metadata:
   creationTimestamp: null
-  name: fz-jenkins
+  name: ${GUID}-jenkins
 objects:
 - apiVersion: v1
   kind: DeploymentConfig
@@ -137,3 +137,12 @@ objects:
         storage: 4Gi
     volumeName: vol105
   status: {}
+parameters:
+  - displayName: Jenkins volume size
+    name: JENKINS_VOLUME
+    required: true
+    value: 4Gi
+  - displayName: GUID
+    name: GUID
+    required: true
+    value: f519
