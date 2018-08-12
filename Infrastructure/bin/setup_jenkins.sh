@@ -28,6 +28,7 @@ echo "Setting up Jenkins in project ${GUID}-jenkins from Git Repo ${REPO} for Cl
 
 # To be Implemented by Student
 oc policy add-role-to-user edit system:serviceaccount:$GUID-jenkins:jenkins -n $GUID-jenkins
+oc policy add-role-to-user edit system:serviceaccount:gpte-jenkins:jenkins -n $GUID-jenkins
 
 oc new-app jenkins-openshift -f ./Infrastructure/templates/jenkins.yaml \
     --param MEMORY_LIMIT=1Gi \
