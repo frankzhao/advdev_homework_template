@@ -15,6 +15,7 @@ echo "Setting up Parks Production Environment in project ${GUID}-parks-prod"
 # To be Implemented by Student
 oc policy add-role-to-user view --serviceaccount=default -n $GUID-parks-prod
 oc policy add-role-to-user edit system:serviceaccount:$GUID-jenkins:jenkins -n $GUID-parks-prod
+oc policy add-role-to-user admin system:serviceaccount:gpte-jenkins:jenkins -n $GUID-parks-prod
 
 MONGODB_DATABASE="mongodb"
 MONGODB_USERNAME="mongodb_user"
