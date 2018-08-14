@@ -116,7 +116,7 @@ oc expose dc/mlbparks --port=8080 -n $GUID-parks-dev
 oc expose svc/mlbparks
 # oc create route mlbparks --service=mlbparks --port=8080 -n $GUID-parks-dev
 oc set probe dc/mlbparks --readiness \
-    --get-url=http://:8080/ws/info/ --initial-delay-seconds=30 -n $GUID-parks-dev
+    --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30 -n $GUID-parks-dev
 oc set probe dc/mlbparks --liveness \
     --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30 -n $GUID-parks-dev
 # oc set deployment-hook dc/mlbparks --post -- \
