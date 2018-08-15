@@ -20,7 +20,7 @@ oc new-app -f ./Infrastructure/templates/sonarqube.template.yaml\
   --param POSTGRESQL_USERNAME=sonar\
   --param POSTGRESQL_PASSWORD=sonar\
   --param POSTGRESQL_DATABASE=sonar\
-  --param POSTGRESQL_VOLUME=4Gi\
+  --param POSTGRESQL_VOLUME=1Gi\
   --param GUID=$GUID\
   -n $GUID-sonarqube
 # oc set probe dc/docker-openshift-sonarqube --liveness --get-url=http://:9000/about --initial-delay-seconds=20

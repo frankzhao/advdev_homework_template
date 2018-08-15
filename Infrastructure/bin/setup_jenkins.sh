@@ -32,7 +32,7 @@ oc policy add-role-to-user edit system:serviceaccount:gpte-jenkins:jenkins -n $G
 
 oc new-app -f ./Infrastructure/templates/jenkins.yaml \
     --param MEMORY_LIMIT=1Gi \
-    --param JENKINS_VOLUME=4Gi \
+    --param JENKINS_VOLUME=1Gi \
     -n $GUID-jenkins
 
 oc rollout status dc/jenkins --watch -n $GUID-jenkins
