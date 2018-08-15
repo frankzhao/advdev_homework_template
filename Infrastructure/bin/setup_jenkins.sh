@@ -30,20 +30,13 @@ echo "Setting up Jenkins in project ${GUID}-jenkins from Git Repo ${REPO} for Cl
 oc policy add-role-to-user edit system:serviceaccount:$GUID-jenkins:jenkins -n $GUID-jenkins
 oc policy add-role-to-user edit system:serviceaccount:gpte-jenkins:jenkins -n $GUID-jenkins
 
-oc new-app jenkins-openshift -f ./Infrastructure/templates/jenkins.yaml \
+oc new-app -f ./Infrastructure/templates/jenkins.yaml \
     --param MEMORY_LIMIT=1Gi \
-    --param VOLUME_CAPACITY=4Gi \
+    --param JENKINS_VOLUME=4Gi \
     -n $GUID-jenkins
 
-# oc new-app jenkins-persistent -f ./Infrastructure/templates/jenkins.template.yaml \
-#     --param JENKINS_VOLUME=4Gi\
-#     --param GUID=$GUID\
-#     -n $GUID-jenkins
+oc rollout status dc/jenkins --watch -n $GUID-jenkins
 
-# build skopeo slave
-# docker build -t docker-registry-default.$CLUSTER/$GUID-jenkins/jenkins-slave-appdev:v3.9 ./Infrastructure/templates/docker/skopeo
-# docker login docker-registry-default.$CLUSTER -u $(oc whoami) -p $(oc whoami -t)
-# docker push docker-registry-default.$CLUSTER/$GUID-jenkins/jenkins-slave-appdev:v3.9
 oc new-build --name=jenkins-slave-appdev \
     --dockerfile="$(< ./Infrastructure/templates/docker/skopeo/Dockerfile)" \
     -n $GUID-jenkins
