@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Template
 metadata:
   creationTimestamp: null
-  name: ${GUID}-jenkins
+  name: jenkins
 objects:
 - apiVersion: v1
   kind: DeploymentConfig
@@ -13,9 +13,10 @@ objects:
     creationTimestamp: null
     generation: 1
     labels:
-      app: jenkins-persistent
-      template: jenkins-persistent-template
-    name: ${GUID}-jenkins
+      app: jenkins
+      template: jenkins-template
+    name: jenkins
+    namespace: ${GUID}-jenkins
   spec:
     replicas: 1
     revisionHistoryLimit: 10
@@ -41,6 +42,8 @@ objects:
             value: "true"
           - name: OPENSHIFT_ENABLE_REDIRECT_PROMPT
             value: "true"
+          - name: ENABLE_OAUTH
+            value: "true"
           - name: KUBERNETES_MASTER
             value: https://kubernetes.default:443
           - name: KUBERNETES_TRUST_CERTIFICATES
@@ -49,10 +52,10 @@ objects:
             value: jenkins
           - name: JNLP_SERVICE_NAME
             value: jenkins-jnlp
-          image: registry.access.redhat.com/openshift3/jenkins-2-rhel7@sha256:1a5877a002240e5ef7d4f53cbdc1fff8107c6574a4040f6bdbfab0341aecfd86
+          image: ' '
           imagePullPolicy: IfNotPresent
           livenessProbe:
-            failureThreshold: 2
+            failureThreshold: 3
             httpGet:
               path: /login
               port: 8080
@@ -68,17 +71,13 @@ objects:
               path: /login
               port: 8080
               scheme: HTTP
-            initialDelaySeconds: 3
+            initialDelaySeconds: 60
             periodSeconds: 10
             successThreshold: 1
-            timeoutSeconds: 240
+            timeoutSeconds: 600
           resources:
             limits:
-              cpu: "2"
-              memory: 2Gi
-            requests:
-              cpu: "1"
-              memory: 1.5Gi
+              memory: ${MEMORY_LIMIT}
           securityContext:
             capabilities: {}
             privileged: false
@@ -98,7 +97,6 @@ objects:
         - name: jenkins-data
           persistentVolumeClaim:
             claimName: jenkins-pvc
-    test: false
     triggers:
     - imageChangeParams:
         automatic: true
@@ -110,39 +108,18 @@ objects:
           namespace: openshift
       type: ImageChange
     - type: ConfigChange
-  status:
-    availableReplicas: 0
-    latestVersion: 0
-    observedGeneration: 0
-    replicas: 0
-    unavailableReplicas: 0
-    updatedReplicas: 0
-# - apiVersion: v1
-#   kind: Service
-#   metadata:
-#     creationTimestamp: null
-#     labels:
-#       app: jenkins-persistent
-#       template: jenkins-persistent-template
-#     name: jenkins
-#   spec:
-#     ports:
-#     - name: web
-#       port: 80
-#       protocol: TCP
-#       targetPort: 8080
-#     selector:
-#       name: jenkins
-#     sessionAffinity: None
-#     type: ClusterIP
-#   status:
-#     loadBalancer: {}
 - apiVersion: v1
   kind: Route
   metadata:
+    annotations:
+      haproxy.router.openshift.io/timeout: 4m
+      openshift.io/generated-by: OpenShiftNewApp
+      openshift.io/host.generated: "true"
+      template.openshift.io/expose-uri: http://{.spec.host}{.spec.path}
     creationTimestamp: null
     labels:
       app: jenkins
+      template: jenkins-template
     name: jenkins
     namespace: ${GUID}-jenkins
   spec:
@@ -155,20 +132,68 @@ objects:
       weight: 100
     wildcardPolicy: None
 - apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: jenkins
+      template: jenkins-template
+    name: jenkins
+    namespace: ${GUID}-jenkins
+  spec:
+    ports:
+    - name: web
+      port: 80
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      name: jenkins
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: jenkins
+      template: jenkins-template
+    name: jenkins-jnlp
+    namespace: ${GUID}-jenkins
+  spec:
+    clusterIP: 172.30.236.25
+    ports:
+    - name: agent
+      port: 50000
+      protocol: TCP
+      targetPort: 50000
+    selector:
+      name: jenkins
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
   kind: ServiceAccount
   metadata:
+    annotations:
+      serviceaccounts.openshift.io/oauth-redirectreference.jenkins: '{"kind":"OAuthRedirectReference","apiVersion":"v1","reference":{"kind":"Route","name":"jenkins"}}'
+    labels:
+      app: jenkins
+      template: jenkins-template
     name: jenkins
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
-    annotations:
-      openshift.io/generated-by: OpenShiftNewApp
-      pv.kubernetes.io/bind-completed: "yes"
-      pv.kubernetes.io/bound-by-controller: "yes"
     creationTimestamp: null
     labels:
-      app: jenkins-persistent
-      template: jenkins-persistent-template
+      app: jenkins
+      template: jenkins-template
     name: jenkins-pvc
   spec:
     accessModes:
@@ -180,7 +205,11 @@ parameters:
   - displayName: Jenkins volume size
     name: JENKINS_VOLUME
     required: true
-    value: 4Gi
+    value: 1Gi
+  - displayName: Jenkins memory limit
+    name: MEMORY_LIMIT
+    required: true
+    value: 1Gi
   - displayName: GUID
     name: GUID
     required: true
