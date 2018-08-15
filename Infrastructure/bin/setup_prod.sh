@@ -74,9 +74,11 @@ oc set probe dc/parksmap-blue --liveness \
     --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=60 \
     --failure-threshold 5 -n $GUID-parks-prod
 
-oc create service clusterip parksmap-green --tcp=8080 -n $GUID-parks-prod
-oc create service clusterip parksmap-blue --tcp=8080 -n $GUID-parks-prod
-oc expose svc/parksmap-green --name=parksmap --port=8080 -n $GUID-parks-prod
+# oc create service clusterip parksmap-green --tcp=8080 -n $GUID-parks-prod
+# oc create service clusterip parksmap-blue --tcp=8080 -n $GUID-parks-prod
+oc expose dc/parksmap-green --port=8080 -l type=parksmap-frontend -n $GUID-parks-prod
+oc expose dc/parksmap-blue --port=8080 -l type=parksmap-frontend -n $GUID-parks-prod
+oc expose svc/parksmap-green --name=parksmap -n $GUID-parks-prod
 
 # nationalparks
 oc new-app $GUID-parks-prod/nationalparks-green:0.0 --name=nationalparks-green \
@@ -121,9 +123,11 @@ oc set probe dc/nationalparks-blue --liveness \
     --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30 \
     --failure-threshold 3 -n $GUID-parks-prod
 
-oc create service clusterip nationalparks-green --tcp=8080 -n $GUID-parks-prod
-oc create service clusterip nationalparks-blue --tcp=8080 -n $GUID-parks-prod
-oc expose svc/nationalparks-green --name=nationalparks --port=8080 -n $GUID-parks-prod
+# oc create service clusterip nationalparks-green --tcp=8080 -n $GUID-parks-prod
+# oc create service clusterip nationalparks-blue --tcp=8080 -n $GUID-parks-prod
+oc expose dc/nationalparks-green --port=8080 -l type=parksmap-backend -n $GUID-parks-prod
+oc expose dc/nationalparks-blue --port=8080 -l type=parksmap-backend -n $GUID-parks-prod
+oc expose svc/nationalparks-green --name=nationalparks -n $GUID-parks-prod
 
 # mlbparks
 oc new-app $GUID-parks-prod/mlbparks-green:0.0 --name=mlbparks-green \
@@ -164,19 +168,13 @@ oc set probe dc/mlbparks-blue --readiness \
 oc set probe dc/mlbparks-blue --liveness \
     --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30 -n $GUID-parks-prod
 
-oc create service clusterip mlbparks-green --tcp=8080 -n $GUID-parks-prod
-oc create service clusterip mlbparks-blue --tcp=8080 -n $GUID-parks-prod
-oc expose svc/mlbparks-green --name=mlbparks --port=8080 -n $GUID-parks-prod
+# oc create service clusterip mlbparks-green --tcp=8080 -n $GUID-parks-prod
+# oc create service clusterip mlbparks-blue --tcp=8080 -n $GUID-parks-prod
+oc expose dc/mlbparks-green --port=8080 -l type=parksmap-backend -n $GUID-parks-prod
+oc expose dc/mlbparks-blue --port=8080 -l type=parksmap-backend -n $GUID-parks-prod
+oc expose svc/mlbparks-green --name=mlbparks -n $GUID-parks-prod
 
-# oc expose svc/mlbparks-green -n $GUID-parks-prod
-# oc expose svc/mlbparks-blue -n $GUID-parks-prod
-
-# oc expose svc/nationalparks-green -n $GUID-parks-prod
-# oc expose svc/nationalparks-blue -n $GUID-parks-prod
-
-# oc expose svc/parksmap-green -n $GUID-parks-prod
-# oc expose svc/parksmap-blue -n $GUID-parks-prod
-
+# set resource limits
 oc set resources dc/parksmap-blue --limits=memory=1Gi --requests=memory=0.5Gi -n $GUID-parks-prod
 oc set resources dc/parksmap-green --limits=memory=1Gi --requests=memory=0.5Gi -n $GUID-parks-prod
 oc set resources dc/mlbparks-blue --limits=memory=1Gi --requests=memory=0.5Gi -n $GUID-parks-prod

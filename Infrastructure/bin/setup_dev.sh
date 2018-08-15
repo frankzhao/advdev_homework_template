@@ -54,8 +54,9 @@ oc new-app $GUID-parks-dev/parksmap:0.0-0 --name=parksmap \
     -n $GUID-parks-dev
 # oc rollout cancel dc/parksmap -n $GUID-parks-dev
 oc set triggers dc/parksmap --remove-all -n $GUID-parks-dev
-oc create service clusterip parksmap --tcp=8080 -n $GUID-parks-dev
-oc expose svc/parksmap --port=8080 --name=parksmap -n $GUID-parks-dev
+# oc create service clusterip parksmap --tcp=8080 -n $GUID-parks-dev
+oc expose dc/parksmap --port=8080 -l type=parksmap-frontend -n $GUID-parks-dev
+oc expose svc/parksmap -n $GUID-parks-dev
 # oc create route parksmap --service=parksmap --port=8080 -n $GUID-parks-dev
 oc set probe dc/parksmap --readiness \
     --get-url=http://:8080/ws/appname/ --initial-delay-seconds=30 -n $GUID-parks-dev
@@ -82,8 +83,8 @@ oc new-app $GUID-parks-dev/nationalparks:0.0-0 --name=nationalparks \
 oc set env dc/nationalparks --from configmap/parks-mongodb-config -n $GUID-parks-dev
 oc set triggers dc/nationalparks --remove-all -n $GUID-parks-dev
 # oc create service clusterip nationalparks --tcp=8080 -n $GUID-parks-dev
-oc expose dc/nationalparks --port=8080 -n $GUID-parks-dev
-oc expose svc/nationalparks
+oc expose dc/nationalparks --port=8080 -l type=parksmap-backend -n $GUID-parks-dev
+oc expose svc/nationalparks -n $GUID-parks-dev
 # oc create route nationalparks --service=nationalparks --port=8080 -n $GUID-parks-dev
 oc set probe dc/nationalparks --readiness \
     --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30 -n $GUID-parks-dev
@@ -112,8 +113,8 @@ oc new-app $GUID-parks-dev/mlbparks:0.0-0 --name=mlbparks \
 oc set env dc/mlbparks --from configmap/parks-mongodb-config -n $GUID-parks-dev
 oc set triggers dc/mlbparks --remove-all -n $GUID-parks-dev
 # oc create service clusterip mlbparks --tcp=8080 -n $GUID-parks-dev
-oc expose dc/mlbparks --port=8080 -n $GUID-parks-dev
-oc expose svc/mlbparks
+oc expose dc/mlbparks --port=8080 -l type=parksmap-backend -n $GUID-parks-dev
+oc expose svc/mlbparks -n $GUID-parks-dev
 # oc create route mlbparks --service=mlbparks --port=8080 -n $GUID-parks-dev
 oc set probe dc/mlbparks --readiness \
     --get-url=http://:8080/ws/healthz/ --initial-delay-seconds=30 -n $GUID-parks-dev
