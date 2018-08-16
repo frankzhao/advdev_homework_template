@@ -8,8 +8,8 @@ fi
 
 GUID=$1
 echo "Setting up Sonarqube in project $GUID-sonarqube"
-oc policy add-role-to-user edit system:serviceaccount:$GUID-jenkins:jenkins -n $GUID-jenkins
-oc policy add-role-to-user edit system:serviceaccount:gpte-jenkins:jenkins -n $GUID-jenkins
+oc policy add-role-to-user edit system:serviceaccount:$GUID-jenkins:jenkins -n $GUID-sonarqube
+oc policy add-role-to-user edit system:serviceaccount:gpte-jenkins:jenkins -n $GUID-sonarqube
 
 # Code to set up the SonarQube project.
 # Ideally just calls a template

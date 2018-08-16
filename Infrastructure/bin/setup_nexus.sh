@@ -28,6 +28,7 @@ echo "Setting up Nexus in project $GUID-nexus"
 # Ideally just calls a template
 # oc new-app -f ./Infrastructure/templates/nexus.yaml --param .....
 # To be Implemented by Student
+oc policy add-role-to-user edit system:serviceaccount:gpte-jenkins:jenkins -n $GUID-nexus
 oc new-app -f ./Infrastructure/templates/nexus.template.yaml \
   --param GUID=$GUID -n $GUID-nexus
 
